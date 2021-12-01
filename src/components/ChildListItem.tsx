@@ -12,7 +12,7 @@ export const ChildListItem: FC<Props> = (props) => {
   const { child, getChildrenDataKey } = props;
 
   const queryClient = useQueryClient();
-  const picupTime = "16:00";
+  const picupTime = "19:00";
 
   const mutationfunc = async (childId: string) =>
     await fetchHelper(
@@ -48,7 +48,7 @@ export const ChildListItem: FC<Props> = (props) => {
   };
 
   return (
-    <li>
+    <li style={{marginBottom: "10px", cursor: "pointer"}}>
       <div onClick={() => handleClick(child)}>
         <img
           style={{ width: "40px", height: "40px" }}

@@ -12,36 +12,35 @@ type Props = {
 export const ChildList: FC<Props> = (props) => {
   const { institutionId, groupId } = props;
 
-  const itemsPerPage = 10;
   const getChildrenDataKey = `https://app.famly.co/api/daycare/tablet/group?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}&groupId=${groupId}&institutionId=${institutionId}`;
 
   const { data, isLoading, error } =
     useQuery<GetChildrenData>(getChildrenDataKey);
 
+  const itemsPerPageOptions = [5, 10, 20, 50];
+
   const [selectedPage, setSelectedPage] = useState(0);
   const [buttons, setButtons] = useState<number[]>([]);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     if (data) {
       const pageCount = Math.ceil(data.children.length / itemsPerPage);
-      console.log("pageCount", pageCount)
       let buttonsH = [];
 
       for (let i = 0; i < pageCount; i++) {
-        buttonsH.push(i );
+        buttonsH.push(i + 1);
       }
 
-      console.log("buttons", buttonsH);
       setButtons(buttonsH);
     }
-  }, [data]);
+  }, [data, itemsPerPage]);
 
   const startIndex = selectedPage === 0 ? 0 : selectedPage * itemsPerPage;
   const endIndex =
     selectedPage === 0 ? itemsPerPage : startIndex + itemsPerPage;
 
   const pageitems = data?.children.slice(startIndex, endIndex);
-  console.log("pageitems", pageitems);
 
   if (isLoading) {
     return <div>loading</div>;
@@ -50,21 +49,29 @@ export const ChildList: FC<Props> = (props) => {
   return (
     <div>
       <div>
-        {buttons.map((button) => (
-          <button onClick={() => setSelectedPage(button)}>{button}</button>
-        ))}
-      </div>
-      <div style={{ display: "flex" }}>
-        <ul>
-          {data?.children?.map((child) => (
-            <ChildListItem
-              key={child.childId}
-              child={child}
-              getChildrenDataKey={getChildrenDataKey}
-            />
+        <span>itemsPerPageOptions</span>
+        <span>
+          {itemsPerPageOptions.map((button) => (
+            <button key={button} onClick={() => setItemsPerPage(button)}>
+              {button}
+            </button>
           ))}
-        </ul>
+        </span>
+      </div>
 
+
+      <div>
+        <span>page</span>
+        <span>
+          {buttons.map((button) => (
+            <button key={button} onClick={() => setSelectedPage(button - 1)}>
+              {button}
+            </button>
+          ))}
+        </span>
+      </div>
+
+      <div style={{ display: "flex" }}>
         <ul>
           {pageitems?.map((child) => (
             <ChildListItem
