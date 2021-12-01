@@ -5,11 +5,11 @@ import { fetchHelper } from "utils/apiHelpers";
 
 type Props = {
   child: Child;
-  getChildrenDataKey: string
+  getChildrenDataKey: string;
 };
 
 export const ChildListItem: FC<Props> = (props) => {
-  const { child, getChildrenDataKey} = props;
+  const { child, getChildrenDataKey } = props;
 
   const queryClient = useQueryClient();
   const picupTime = "16:00";
@@ -48,7 +48,7 @@ export const ChildListItem: FC<Props> = (props) => {
   };
 
   return (
-    <li >
+    <li>
       <div onClick={() => handleClick(child)}>
         <img
           style={{ width: "40px", height: "40px" }}
@@ -61,7 +61,6 @@ export const ChildListItem: FC<Props> = (props) => {
         ) : (
           <span style={{ color: "red" }}> not checkedIn</span>
         )}
-
         {selectedMutation.isLoading && <span>loading</span>}
       </div>
     </li>
