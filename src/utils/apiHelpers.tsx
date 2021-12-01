@@ -8,7 +8,9 @@ export const postInit = {
   // headers: fetchHeaders,
 };
 
-export const fetchHelper = async (url: string) => {
-  const response = await fetch(url, getInit);
+export const fetchHelper = async (url: string, method: string = "GET") => {
+  const response = await fetch(url, {
+    method
+  });
   return response.json();
 };

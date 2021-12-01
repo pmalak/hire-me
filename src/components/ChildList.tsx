@@ -1,6 +1,7 @@
 import { FC } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { GetChildrenData } from "types";
+import { fetchHelper } from "utils/apiHelpers";
 
 type Props = {}
 
@@ -14,7 +15,16 @@ export const ChildList: FC<Props> = props => {
     `https://app.famly.co/api/daycare/tablet/group?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}&groupId=${groupId}&institutionId=${institutionId}`
   );
 
-  // https://app.famly.co/api/v2/children/3f12dcc7-d10d-4aef-902d-e7be4043b759/checkout?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}
+
+
+  const mutationfunc = async () => await fetchHelper( "https://app.famly.co/api/v2/children/${childId}/checkout?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}", "POST")
+
+  const checkoutChild =  useMutation(mutationfunc)
+  const childId = "3f12dcc7-d10d-4aef-902d-e7be4043b759"
+  const picupTime = "16:00"
+  
+
+  // https://app.famly.co/api/v2/children/${childId}/checkins?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}&pickupTime=${picupTime}
 
   console.log("data", data)
 
@@ -28,7 +38,7 @@ export const ChildList: FC<Props> = props => {
       {data?.children.map(child => <li>
         <div>
           <img
-            style={{width: "40px", height: "40px"}}
+            style={{ width: "40px", height: "40px" }}
             src={child.image.small}
             alt=""
           /><span>  {child.name.fullName}</span> <span>{child.checkedIn ? "checkedIn" : " not checkedIn"}</span>
