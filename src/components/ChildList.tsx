@@ -1,8 +1,20 @@
-import { FC, useEffect, useState } from "react";
+import {
+  Box,
+  Grid,
+  Pagination,
+  PaginationItem,
+  Paper,
+  Table,
+  TableContainer,
+  TableHead,
+  Typography,
+} from "@mui/material";
+import { ChangeEvent, FC, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Child, GetChildrenData } from "types";
 import { fetchHelper } from "utils/apiHelpers";
 import { ChildListItem } from "./ChildListItem";
+import styled from "styled-components";
 
 type Props = {
   institutionId: string;
@@ -21,7 +33,7 @@ export const ChildList: FC<Props> = (props) => {
 
   const [selectedPage, setSelectedPage] = useState(0);
   const [buttons, setButtons] = useState<number[]>([]);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   useEffect(() => {
     if (data) {
@@ -40,16 +52,42 @@ export const ChildList: FC<Props> = (props) => {
   const endIndex =
     selectedPage === 0 ? itemsPerPage : startIndex + itemsPerPage;
 
-  const pageitems = data?.children.slice(startIndex, endIndex);
+  const handleChange = (event: ChangeEvent, value: number) => {
+    setSelectedPage(value - 1);
+  };
+
+  const pageItems = data?.children.slice(startIndex, endIndex);
 
   if (isLoading) {
     return <div>loading</div>;
   }
 
   return (
-    <div>
+    <Container>
+      <Typography variant="h4">Children</Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead></TableHead>
+
+          {pageItems?.map((child) => (
+            <ChildListItem
+              key={child.childId}
+              child={child}
+              getChildrenDataKey={getChildrenDataKey}
+            />
+          ))}
+        </Table>
+      </TableContainer>
+
+      <Pagination
+        count={buttons.length}
+        page={selectedPage + 1}
+        //@ts-ignore
+        onChange={handleChange}
+      />
+
       <div>
-        <span>itemsPerPageOptions</span>
+        <span>show </span>
         <span>
           {itemsPerPageOptions.map((button) => (
             <button key={button} onClick={() => setItemsPerPage(button)}>
@@ -57,31 +95,17 @@ export const ChildList: FC<Props> = (props) => {
             </button>
           ))}
         </span>
+        <span> per page</span>
       </div>
-
-
-      <div>
-        <span>page</span>
-        <span>
-          {buttons.map((button) => (
-            <button key={button} onClick={() => setSelectedPage(button - 1)}>
-              {button}
-            </button>
-          ))}
-        </span>
-      </div>
-
-      <div style={{ display: "flex" }}>
-        <ul>
-          {pageitems?.map((child) => (
-            <ChildListItem
-              key={child.childId}
-              child={child}
-              getChildrenDataKey={getChildrenDataKey}
-            />
-          ))}
-        </ul>
-      </div>
-    </div>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  display: grid;
+  grid-row-gap: 16px;
+  justify-items: center;
+`;

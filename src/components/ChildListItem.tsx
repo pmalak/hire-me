@@ -1,5 +1,10 @@
+import Button from "@mui/material/Button";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
 import { FC } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import styled from "styled-components";
 import { Child } from "types";
 import { fetchHelper } from "utils/apiHelpers";
 
@@ -14,55 +19,70 @@ export const ChildListItem: FC<Props> = (props) => {
   const queryClient = useQueryClient();
   const picupTime = "19:00";
 
-  const mutationfunc = async (childId: string) =>
+  const mutationfunc = async () =>
     await fetchHelper(
-      `https://app.famly.co/api/v2/children/${childId}/checkout?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}`,
+      `https://app.famly.co/api/v2/children/${child.childId}/checkout?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}`,
       "POST"
     );
 
-  const checkoutChild = useMutation(mutationfunc, {
+  const checkOutChild = useMutation(mutationfunc, {
     onSuccess: (data) => {
-      console.log("res", data);
       queryClient.invalidateQueries([getChildrenDataKey]);
     },
   });
 
-  const mutationfuncCheckIn = async (id: string) =>
+  const mutationfuncCheckIn = async () =>
     await fetchHelper(
-      `https://app.famly.co/api/v2/children/${id}
+      `https://app.famly.co/api/v2/children/${child.childId}
       /checkins?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}&pickupTime=${picupTime}`,
       "POST"
     );
 
   const checkInChild = useMutation(mutationfuncCheckIn, {
     onSuccess: (data) => {
-      console.log("res", data);
       queryClient.invalidateQueries([getChildrenDataKey]);
     },
+
   });
 
-  const selectedMutation = child.checkedIn ? checkoutChild : checkInChild;
+  const selectedMutation = child.checkedIn ? checkOutChild : checkInChild;
 
-  const handleClick = (child: Child) => {
-    selectedMutation.mutate(child.childId);
+  const handleClick = () => {
+    selectedMutation.mutate();
   };
 
   return (
-    <li style={{marginBottom: "10px", cursor: "pointer"}}>
-      <div onClick={() => handleClick(child)}>
+    <TableRow>
+      <TableCell>
         <img
           style={{ width: "40px", height: "40px" }}
           src={child.image.small}
           alt=""
         />
-        <span> {child.name.fullName}</span>{" "}
-        {child.checkedIn ? (
-          <span style={{ color: "green" }}>checkedIn</span>
-        ) : (
-          <span style={{ color: "red" }}> not checkedIn</span>
-        )}
+      </TableCell>
+
+      <TableCell>
+        <Name $checkdIn={child.checkedIn}>{child.name.fullName}</Name>
+      </TableCell>
+
+      <TableCell>
+        {!selectedMutation.isLoading &&
+          (child.checkedIn ? (
+            <Button color="error" onClick={handleClick}>
+              Check out
+            </Button>
+          ) : (
+            <Button variant="contained" color="success" onClick={handleClick}>
+              Check in
+            </Button>
+          ))}
+
         {selectedMutation.isLoading && <span>loading</span>}
-      </div>
-    </li>
+      </TableCell>
+    </TableRow>
   );
 };
+
+const Name = styled(Typography)<{ $checkdIn: boolean }>`
+  color: ${({ $checkdIn }) => ($checkdIn ? "unset" : "#504e4e8f")};
+`;
