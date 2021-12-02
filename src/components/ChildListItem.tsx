@@ -1,4 +1,7 @@
+import { LinearProgress } from "@mui/material";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
@@ -19,7 +22,7 @@ export const ChildListItem: FC<Props> = (props) => {
 
   const queryClient = useQueryClient();
 
-  const picupTime = "19:00";
+  const picupTime = "24:00";
   const mutationBaseUrl = `/v2/children/${child.childId}`;
   const mutationBaseOptions: UseMutationOptions = {
     onSuccess: (data) => {
@@ -44,7 +47,7 @@ export const ChildListItem: FC<Props> = (props) => {
   };
 
   return (
-    <TableRow>
+    <TableRow style={{position: "relative"}}>
       <TableCell>
         <StyledImage src={child.image.small} alt="" />
       </TableCell>
@@ -54,24 +57,23 @@ export const ChildListItem: FC<Props> = (props) => {
       </TableCell>
 
       <TableCell>
-        {!selectedMutation.isLoading &&
-          (child.checkedIn ? (
-            <Button color="error" onClick={handleClick} size="small">
-              Check out
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="success"
-              size="small"
-              onClick={handleClick}
-            >
-              Check in
-            </Button>
-          ))}
-
-        {selectedMutation.isLoading && <span>loading</span>}
+        {child.checkedIn ? (
+          <Button color="error" onClick={handleClick} size="small">
+            Check out
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="success"
+            size="small"
+            onClick={handleClick}
+          >
+            Check in
+          </Button>
+        )}
       </TableCell>
+      
+      <Box position="absolute" top={0} left={0} width={"100%"}>{selectedMutation.isLoading && <LinearProgress />}</Box>
     </TableRow>
   );
 };

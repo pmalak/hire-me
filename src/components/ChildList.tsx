@@ -6,6 +6,7 @@ import {
   Pagination,
   PaginationItem,
   Paper,
+  Skeleton,
   Table,
   TableContainer,
   TableHead,
@@ -37,16 +38,12 @@ export const ChildList: FC<Props> = (props) => {
   const itemsPerPageOptions = [5, 10, 20, 50];
 
   const [selectedPage, setSelectedPage] = useState(0);
-  const [buttons, setButtons] = useState<number[]>([]);
   const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
+  const [pageCount, setPageCount] = useState<number>(0);
 
   useEffect(() => {
     if (data) {
-      const pageCount = Math.ceil(data.children.length / itemsPerPage);
-
-      const button = Array.from({ length: pageCount }, (_, i) => i + 1);
-
-      setButtons(button);
+      setPageCount(Math.ceil(data.children.length / itemsPerPage));
     }
   }, [data, itemsPerPage]);
 
@@ -54,14 +51,25 @@ export const ChildList: FC<Props> = (props) => {
   const endIndex =
     selectedPage === 0 ? itemsPerPage : startIndex + itemsPerPage;
 
-  const handleChange = (event: ChangeEvent, value: number) => {
-    setSelectedPage(value - 1);
+  const handleChange = (event: ChangeEvent<unknown>, page: number) => {
+    setSelectedPage(page - 1);
   };
 
   const pageItems = data?.children.slice(startIndex, endIndex);
 
   if (isLoading) {
-    return <div>loading</div>;
+    return (
+      <Container>
+        <Typography variant="h4">Children</Typography>
+        <Box width={"100%"}>
+          <Skeleton animation="wave" height={77} />
+          <Skeleton animation="wave" height={77} />
+          <Skeleton animation="wave" height={77} />
+          <Skeleton animation="wave" height={77} />
+          <Skeleton animation="wave" height={77} />
+        </Box>
+      </Container>
+    );
   }
 
   return (
@@ -82,33 +90,33 @@ export const ChildList: FC<Props> = (props) => {
       </TableContainer>
 
       <Pagination
-        count={buttons.length}
+        count={pageCount}
         page={selectedPage + 1}
-        //@ts-ignore
         onChange={handleChange}
       />
 
       <div>
-        <span>show{" "}</span>
+        <span>show </span>
         <ButtonGroup variant="outlined" aria-label="text button group">
-          {itemsPerPageOptions.map((button) => (
+          {itemsPerPageOptions.map((option) => (
             <Button
-              variant={button === itemsPerPage ? "contained" : "outlined"}
+              variant={option === itemsPerPage ? "contained" : "outlined"}
               size="small"
-              key={button}
-              onClick={() => setItemsPerPage(button)}
+              key={option}
+              onClick={() => setItemsPerPage(option)}
             >
-              {button}
+              {option}
             </Button>
           ))}
         </ButtonGroup>
-        <span>{" "}per page</span>
+        <span> per page</span>
       </div>
     </Container>
   );
 };
 
 const Container = styled.div`
+  width: 100%;
   max-width: 500px;
   margin: 0 auto;
   padding: 24px 16px;
