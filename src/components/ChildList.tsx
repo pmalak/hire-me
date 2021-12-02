@@ -1,5 +1,7 @@
 import {
   Box,
+  Button,
+  ButtonGroup,
   Grid,
   Pagination,
   PaginationItem,
@@ -14,6 +16,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Child, GetChildrenData } from "types";
 import { ChildListItem } from "./ChildListItem";
 import styled from "styled-components";
+import { getUrl } from "utils/apiHelpers";
 
 type Props = {
   institutionId: string;
@@ -22,9 +25,11 @@ type Props = {
 
 export const ChildList: FC<Props> = (props) => {
   const { institutionId, groupId } = props;
-  const initialItemsPerPage = 10
+  const initialItemsPerPage = 5;
 
-  const getChildrenDataKey = `https://app.famly.co/api/daycare/tablet/group?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}&groupId=${groupId}&institutionId=${institutionId}`;
+  const getChildrenDataKey = getUrl(
+    `/daycare/tablet/group?groupId=${groupId}&institutionId=${institutionId}`
+  );
 
   const { data, isLoading, error } =
     useQuery<GetChildrenData>(getChildrenDataKey);
@@ -38,13 +43,10 @@ export const ChildList: FC<Props> = (props) => {
   useEffect(() => {
     if (data) {
       const pageCount = Math.ceil(data.children.length / itemsPerPage);
-      let buttonsH = [];
 
-      for (let i = 0; i < pageCount; i++) {
-        buttonsH.push(i + 1);
-      }
+      const button = Array.from({ length: pageCount }, (_, i) => i + 1);
 
-      setButtons(buttonsH);
+      setButtons(button);
     }
   }, [data, itemsPerPage]);
 
@@ -87,15 +89,20 @@ export const ChildList: FC<Props> = (props) => {
       />
 
       <div>
-        <span>show </span>
-        <span>
+        <span>show{" "}</span>
+        <ButtonGroup variant="outlined" aria-label="text button group">
           {itemsPerPageOptions.map((button) => (
-            <button key={button} onClick={() => setItemsPerPage(button)}>
+            <Button
+              variant={button === itemsPerPage ? "contained" : "outlined"}
+              size="small"
+              key={button}
+              onClick={() => setItemsPerPage(button)}
+            >
               {button}
-            </button>
+            </Button>
           ))}
-        </span>
-        <span> per page</span>
+        </ButtonGroup>
+        <span>{" "}per page</span>
       </div>
     </Container>
   );

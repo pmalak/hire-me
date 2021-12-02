@@ -4,10 +4,10 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { useCustomMutation } from "hooks/useCustomMutation";
 import { FC } from "react";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, UseMutationOptions, useQueryClient } from "react-query";
 import styled from "styled-components";
 import { Child } from "types";
-import { fetchHelper } from "utils/apiHelpers";
+import { baseURL, fetchHelper, getUrl } from "utils/apiHelpers";
 
 type Props = {
   child: Child;
@@ -18,23 +18,23 @@ export const ChildListItem: FC<Props> = (props) => {
   const { child, getChildrenDataKey } = props;
 
   const queryClient = useQueryClient();
-  const picupTime = "19:00";
 
-  const checkOutChild = useCustomMutation(
-    `https://app.famly.co/api/v2/children/${child.childId}/checkout?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}`, {
+  const picupTime = "19:00";
+  const mutationBaseUrl = `/v2/children/${child.childId}`;
+  const mutationBaseOptions: UseMutationOptions = {
     onSuccess: (data) => {
       queryClient.invalidateQueries([getChildrenDataKey]);
     },
-  });
+  };
+
+  const checkOutChild = useCustomMutation(
+    getUrl(`${mutationBaseUrl}/checkout`),
+    mutationBaseOptions
+  );
 
   const checkInChild = useCustomMutation(
-    `https://app.famly.co/api/v2/children/${child.childId}
-      /checkins?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}&pickupTime=${picupTime}`,
-    {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries([getChildrenDataKey]);
-      },
-    }
+    getUrl(`${mutationBaseUrl}/checkins?pickupTime=${picupTime}`),
+    mutationBaseOptions
   );
 
   const selectedMutation = child.checkedIn ? checkOutChild : checkInChild;
@@ -46,11 +46,7 @@ export const ChildListItem: FC<Props> = (props) => {
   return (
     <TableRow>
       <TableCell>
-        <img
-          style={{ width: "40px", height: "40px" }}
-          src={child.image.small}
-          alt=""
-        />
+        <StyledImage src={child.image.small} alt="" />
       </TableCell>
 
       <TableCell>
@@ -60,11 +56,16 @@ export const ChildListItem: FC<Props> = (props) => {
       <TableCell>
         {!selectedMutation.isLoading &&
           (child.checkedIn ? (
-            <Button color="error" onClick={handleClick}>
+            <Button color="error" onClick={handleClick} size="small">
               Check out
             </Button>
           ) : (
-            <Button variant="contained" color="success" onClick={handleClick}>
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              onClick={handleClick}
+            >
               Check in
             </Button>
           ))}
@@ -77,4 +78,9 @@ export const ChildListItem: FC<Props> = (props) => {
 
 const Name = styled(Typography)<{ $checkdIn: boolean }>`
   color: ${({ $checkdIn }) => ($checkdIn ? "unset" : "#504e4e8f")};
+`;
+
+const StyledImage = styled.img`
+  width: 40px;
+  height: 40px;
 `;
