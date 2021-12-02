@@ -12,7 +12,6 @@ import {
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Child, GetChildrenData } from "types";
-import { fetchHelper } from "utils/apiHelpers";
 import { ChildListItem } from "./ChildListItem";
 import styled from "styled-components";
 
@@ -23,6 +22,7 @@ type Props = {
 
 export const ChildList: FC<Props> = (props) => {
   const { institutionId, groupId } = props;
+  const initialItemsPerPage = 10
 
   const getChildrenDataKey = `https://app.famly.co/api/daycare/tablet/group?accessToken=${process.env.REACT_APP_ACCESS_TOKEN}&groupId=${groupId}&institutionId=${institutionId}`;
 
@@ -33,7 +33,7 @@ export const ChildList: FC<Props> = (props) => {
 
   const [selectedPage, setSelectedPage] = useState(0);
   const [buttons, setButtons] = useState<number[]>([]);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
 
   useEffect(() => {
     if (data) {
