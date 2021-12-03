@@ -35,9 +35,13 @@ export const ChildList: FC<Props> = (props) => {
 
   const itemsPerPageOptions = [5, 10, 20, 50];
 
-  const [selectedPage, setSelectedPage] = useState(0);
+  const [selectedPage, setSelectedPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
   const [pageCount, setPageCount] = useState<number>(0);
+
+  useEffect(() => {
+    setSelectedPage(1);
+  }, [itemsPerPage]);
 
   useEffect(() => {
     if (data) {
@@ -45,12 +49,11 @@ export const ChildList: FC<Props> = (props) => {
     }
   }, [data, itemsPerPage]);
 
-  const startIndex = selectedPage === 0 ? 0 : selectedPage * itemsPerPage;
-  const endIndex =
-    selectedPage === 0 ? itemsPerPage : startIndex + itemsPerPage;
+  const startIndex = (selectedPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
 
   const handleChange = (event: ChangeEvent<unknown>, page: number) => {
-    setSelectedPage(page - 1);
+    setSelectedPage(page);
   };
 
   const pageItems = data?.children.slice(startIndex, endIndex);
@@ -92,7 +95,7 @@ export const ChildList: FC<Props> = (props) => {
 
       <Pagination
         count={pageCount}
-        page={selectedPage + 1}
+        page={selectedPage}
         onChange={handleChange}
       />
 
