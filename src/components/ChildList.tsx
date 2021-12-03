@@ -2,9 +2,7 @@ import {
   Box,
   Button,
   ButtonGroup,
-  Grid,
   Pagination,
-  PaginationItem,
   Paper,
   Skeleton,
   Table,
@@ -13,8 +11,8 @@ import {
   Typography,
 } from "@mui/material";
 import { ChangeEvent, FC, useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Child, GetChildrenData } from "types";
+import { useQuery} from "react-query";
+import { GetChildrenData } from "types";
 import { ChildListItem } from "./ChildListItem";
 import styled from "styled-components";
 import { getUrl } from "utils/apiHelpers";
@@ -70,6 +68,10 @@ export const ChildList: FC<Props> = (props) => {
         </Box>
       </Container>
     );
+  }
+
+  if (error) {
+    return <div>something went wrong please try reloading the page</div>;
   }
 
   return (

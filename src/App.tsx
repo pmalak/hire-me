@@ -1,6 +1,5 @@
 import { ChildList } from "components/ChildList";
 import { ReactQueryProvider } from "containers/ReactQueryProvider";
-import { QueryClient, QueryClientProvider } from "react-query";
 
 function App() {
   return (

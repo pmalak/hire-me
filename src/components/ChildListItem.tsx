@@ -1,16 +1,15 @@
 import { LinearProgress } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { useCustomMutation } from "hooks/useCustomMutation";
 import { FC } from "react";
-import { useMutation, UseMutationOptions, useQueryClient } from "react-query";
+import { UseMutationOptions, useQueryClient } from "react-query";
 import styled from "styled-components";
 import { Child } from "types";
-import { baseURL, fetchHelper, getUrl } from "utils/apiHelpers";
+import { getUrl } from "utils/apiHelpers";
 
 type Props = {
   child: Child;
@@ -47,7 +46,7 @@ export const ChildListItem: FC<Props> = (props) => {
   };
 
   return (
-    <TableRow style={{position: "relative"}}>
+    <TableRow style={{ position: "relative" }}>
       <TableCell>
         <StyledImage src={child.image.small} alt="" />
       </TableCell>
@@ -72,8 +71,10 @@ export const ChildListItem: FC<Props> = (props) => {
           </Button>
         )}
       </TableCell>
-      
-      <Box position="absolute" top={0} left={0} width={"100%"}>{selectedMutation.isLoading && <LinearProgress />}</Box>
+
+      <Box position="absolute" top={0} left={0} width={"100%"}>
+        {selectedMutation.isLoading && <LinearProgress />}
+      </Box>
     </TableRow>
   );
 };
