@@ -56,15 +56,12 @@ export const ChildList: FC<Props> = (props) => {
   const pageItems = data?.children.slice(startIndex, endIndex);
 
   if (isLoading) {
+    const arrayToMap = new Array(initialItemsPerPage)
     return (
       <Container>
         <Typography variant="h4">Children</Typography>
         <Box width={"100%"}>
-          <Skeleton animation="wave" height={77} />
-          <Skeleton animation="wave" height={77} />
-          <Skeleton animation="wave" height={77} />
-          <Skeleton animation="wave" height={77} />
-          <Skeleton animation="wave" height={77} />
+          {arrayToMap.map(item => <Skeleton key={item} animation="wave" height={77} />)}
         </Box>
       </Container>
     );

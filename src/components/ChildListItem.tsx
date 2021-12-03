@@ -46,7 +46,7 @@ export const ChildListItem: FC<Props> = (props) => {
   };
 
   return (
-    <TableRow style={{ position: "relative" }}>
+    <StyledTableRow>
       <TableCell>
         <StyledImage src={child.image.small} alt="" />
       </TableCell>
@@ -72,10 +72,8 @@ export const ChildListItem: FC<Props> = (props) => {
         )}
       </TableCell>
 
-      <Box position="absolute" top={0} left={0} width={"100%"}>
-        {selectedMutation.isLoading && <LinearProgress />}
-      </Box>
-    </TableRow>
+      {selectedMutation.isLoading && <StyledLinearProgress />}
+    </StyledTableRow>
   );
 };
 
@@ -86,4 +84,14 @@ const Name = styled(Typography)<{ $checkdIn: boolean }>`
 const StyledImage = styled.img`
   width: 40px;
   height: 40px;
+`;
+
+const StyledTableRow = styled(TableRow)`
+  position: relative;
+`;
+const StyledLinearProgress = styled(LinearProgress)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
 `;
