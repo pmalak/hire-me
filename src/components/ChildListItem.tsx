@@ -1,5 +1,4 @@
 import { LinearProgress } from "@mui/material";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";

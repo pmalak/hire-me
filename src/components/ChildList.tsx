@@ -6,12 +6,12 @@ import {
   Paper,
   Skeleton,
   Table,
+  TableBody,
   TableContainer,
-  TableHead,
   Typography,
 } from "@mui/material";
 import { ChangeEvent, FC, useEffect, useState } from "react";
-import { useQuery} from "react-query";
+import { useQuery } from "react-query";
 import { GetChildrenData } from "types";
 import { ChildListItem } from "./ChildListItem";
 import styled from "styled-components";
@@ -56,12 +56,14 @@ export const ChildList: FC<Props> = (props) => {
   const pageItems = data?.children.slice(startIndex, endIndex);
 
   if (isLoading) {
-    const arrayToMap = new Array(initialItemsPerPage)
+    const arrayToMap = new Array(initialItemsPerPage);
     return (
       <Container>
         <Typography variant="h4">Children</Typography>
         <Box width={"100%"}>
-          {arrayToMap.map(item => <Skeleton key={item} animation="wave" height={77} />)}
+          {arrayToMap.map((item) => (
+            <Skeleton key={item} animation="wave" height={77} />
+          ))}
         </Box>
       </Container>
     );
@@ -76,15 +78,15 @@ export const ChildList: FC<Props> = (props) => {
       <Typography variant="h4">Children</Typography>
       <TableContainer component={Paper}>
         <Table>
-          <TableHead></TableHead>
-
-          {pageItems?.map((child) => (
-            <ChildListItem
-              key={child.childId}
-              child={child}
-              getChildrenDataKey={getChildrenDataKey}
-            />
-          ))}
+          <TableBody>
+            {pageItems?.map((child) => (
+              <ChildListItem
+                key={child.childId}
+                child={child}
+                getChildrenDataKey={getChildrenDataKey}
+              />
+            ))}
+          </TableBody>
         </Table>
       </TableContainer>
 
